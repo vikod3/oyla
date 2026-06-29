@@ -1,0 +1,1769 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OYLA — Handcrafted Rings</title>
+    
+    <!-- Load Inter Tight Font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- CSS Styling -->
+    <style>
+      :root {
+        --color-bg: #ffffff;
+        --color-primary-text: #000000;
+        --color-demoted-text: #000000;
+        --color-divider: #000000;
+        --font-stack: 'Inter Tight', 'Inter', Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--color-bg);
+        color: var(--color-primary-text);
+        font-family: var(--font-stack);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+
+      /* SCROLL-DRIVEN VIDEO HERO */
+      .scroll-video-container {
+        position: relative;
+        height: 500vh; /* Smooth, luxurious scrubbing distance */
+        background-color: #000000;
+        width: 100%;
+        z-index: 10;
+      }
+
+      .video-hero-sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end; /* Pin to the bottom of the screen */
+        align-items: flex-start;
+        background-color: #000000;
+        padding: 48px;
+        box-sizing: border-box;
+      }
+
+      #scroll-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+      }
+
+      /* SECOND SCROLL-DRIVEN VIDEO IN PINNED SECTION */
+      .video-scaling-wrapper {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0%; /* Initial state, expanded via GSAP */
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000000;
+        z-index: 50; /* Place on top of horizontal cards */
+        will-change: width;
+        pointer-events: none; /* Let clicks pass when width is 0% */
+      }
+
+      #scroll-video-second {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 1;
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent; /* No darkening */
+        z-index: 2;
+        pointer-events: none;
+        display: none; /* Fully disabled */
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 3;
+        max-width: 700px;
+        width: 100%;
+        text-align: left;
+      }
+
+      .hero-tag {
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        color: #000000; /* Pure black */
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        display: inline-block;
+        font-weight: 400;
+      }
+
+      .hero-title {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: clamp(36px, 6vw, 72px);
+        font-weight: 400;
+        color: #000000; /* Pure black */
+        line-height: 1.05;
+        letter-spacing: -1px;
+        margin-bottom: 24px;
+      }
+
+      .hero-title-line {
+        display: block;
+      }
+
+      .hero-title-line-inner {
+        display: block;
+        will-change: transform;
+      }
+
+      .hero-subtitle {
+        font-size: 18px;
+        line-height: 1.4;
+        color: #000000; /* Pure black */
+        font-weight: 400;
+      }
+
+      .scroll-indicator {
+        margin-top: 48px;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #000000; /* Pure black */
+        font-weight: 400;
+        display: inline-block;
+        transition: opacity 0.3s ease;
+      }
+
+      .scroll-indicator .arrow {
+        margin-top: 8px;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-8px);
+        }
+        60% {
+          transform: translateY(-4px);
+        }
+      }
+
+      /* MAIN OUTER SECTION */
+      .outer-section {
+        width: 100%;
+        background-color: var(--color-bg);
+        position: relative;
+        z-index: 10;
+        border-bottom: 1px solid var(--color-divider);
+      }
+
+      /* TWO-COLUMN GRID Layout */
+      .grid-container {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        width: 100%;
+        position: relative;
+      }
+
+      /* LEFT COLUMN - Sticky */
+      .left-column {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px 96px 48px 48px;
+        box-sizing: border-box;
+      }
+
+      .left-heading {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: clamp(32px, 4vw, 42px);
+        font-weight: 400;
+        color: var(--color-primary-text);
+        margin: 0;
+        line-height: 1.15;
+      }
+
+      .left-middle {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+      }
+
+      .left-p {
+        color: var(--color-demoted-text);
+        font-size: 24px;
+        line-height: 1.1;
+        letter-spacing: -0.2px;
+        margin: 0;
+        font-weight: 400;
+      }
+
+      .left-bottom {
+        display: block;
+      }
+
+      .explore-btn {
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.1em;
+        border: 1px solid var(--color-primary-text);
+        color: var(--color-primary-text);
+        border-radius: 100px;
+        padding: 12px 24px;
+        background: transparent;
+        cursor: pointer;
+        font-weight: 400;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        outline: none;
+      }
+
+      .explore-btn:hover {
+        background-color: var(--color-primary-text);
+        color: var(--color-bg);
+      }
+
+      .explore-btn:active {
+        transform: scale(0.97);
+      }
+
+      /* RIGHT COLUMN - Scrolling flow */
+      .right-column {
+        border-left: 1px solid var(--color-divider);
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* 4 STAT CARDS */
+      .right-card {
+        width: 100%;
+        padding: 48px;
+        border-bottom: 1px solid var(--color-divider);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 45vh;
+        box-sizing: border-box;
+      }
+
+      /* Remove border bottom on the last card */
+      .right-card:last-child {
+        border-bottom: none;
+      }
+
+      /* Stomp slots structure */
+      .stomp-wrapper {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stomp-stack {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .stomp-track {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .heading-style-h1 {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: clamp(46px, 5.5vw, 70px);
+        letter-spacing: -1.5px;
+        line-height: 0.95;
+        margin: 0;
+        padding: 0;
+        white-space: nowrap;
+        font-weight: 400;
+      }
+
+      /* Hide structural duplicate h1s — CSS-level, no GSAP timing dependency */
+      .stomp-stack .heading-style-h1:first-child {
+        display: none;
+      }
+
+      /* Color pairings for stacks */
+      .stack-a .heading-style-h1 {
+        color: var(--color-primary-text);
+      }
+
+      .stack-b .heading-style-h1 {
+        color: var(--color-demoted-text);
+      }
+
+      /* Detail paragraphs & subtexts */
+      .detail-paragraph {
+        font-size: 24px;
+        color: var(--color-demoted-text);
+        padding-top: 42px;
+        line-height: 1.2;
+        margin: 0;
+        letter-spacing: -0.2px;
+        font-weight: 400;
+      }
+
+      .card-subtext {
+        font-size: 13px;
+        color: var(--color-demoted-text);
+        margin-top: 12px;
+        font-weight: 400;
+      }
+
+      /* REPLICA FOOTER STYLING */
+      .replica-footer {
+        background-color: #ffffff;
+        color: #000000;
+        padding: 80px 48px;
+        font-family: var(--font-stack);
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1.5fr;
+        gap: 48px;
+        box-sizing: border-box;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      .footer-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      .footer-header-item {
+        height: 24px; /* Align row 1 elements to a single line */
+        margin-bottom: 48px; /* Consistent margin before row 2 elements start */
+        display: flex;
+        align-items: center;
+      }
+
+      .footer-header-link {
+        font-size: 18px;
+        font-weight: 400;
+        color: #000000;
+        text-decoration: none;
+        letter-spacing: -0.2px;
+        line-height: 1.2;
+        transition: opacity 0.25s ease;
+      }
+
+      .footer-header-link:hover {
+        opacity: 0.6;
+      }
+
+      .footer-header-text {
+        font-size: 18px;
+        font-weight: 400;
+        color: #000000;
+        letter-spacing: -0.2px;
+        line-height: 1.2;
+        margin: 0;
+      }
+
+      .footer-content-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .footer-links-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .footer-link {
+        font-size: 18px;
+        font-weight: 400;
+        color: #000000;
+        text-decoration: none;
+        transition: opacity 0.25s ease;
+        letter-spacing: -0.2px;
+        width: fit-content;
+      }
+
+      .footer-link:hover {
+        opacity: 0.6;
+      }
+
+      .footer-credits {
+        font-size: 18px;
+        line-height: 1.35;
+        color: #000000;
+        margin-top: 0; /* Align directly to the header container bottom */
+        letter-spacing: -0.2px;
+      }
+
+      .footer-credits p {
+        margin-bottom: 2px;
+      }
+      
+      .footer-credits p:last-child {
+        margin-bottom: 0;
+      }
+
+      .newsletter-desc {
+        font-size: 18px;
+        line-height: 1.35;
+        color: #000000;
+        letter-spacing: -0.2px;
+        margin-top: 0; /* Align directly to the header container bottom */
+        margin-bottom: 24px;
+        max-width: 380px;
+      }
+
+      .newsletter-form {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background-color: #f7f7f5; /* Elegant warm off-white capsule */
+        border-radius: 100px;
+        padding: 6px 6px 6px 24px;
+        width: 100%;
+        max-width: 440px;
+        box-sizing: border-box;
+        transition: box-shadow 0.25s ease;
+      }
+
+      .newsletter-form:focus-within {
+        box-shadow: 0 0 0 1px #000000;
+      }
+
+      .newsletter-input {
+        border: none;
+        background: transparent;
+        color: #000000;
+        font-family: var(--font-stack);
+        font-size: 14px;
+        width: 100%;
+        outline: none;
+        padding: 10px 0;
+      }
+
+      .newsletter-input::placeholder {
+        color: #000000;
+        opacity: 0.4;
+      }
+
+      .newsletter-btn-wrapper {
+        display: flex;
+        align-items: center;
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 100px;
+        padding: 4px 4px 4px 18px;
+        cursor: pointer;
+        transition: background-color 0.25s ease, transform 0.25s ease;
+        margin-left: 12px;
+        flex-shrink: 0;
+      }
+
+      .newsletter-btn-wrapper:hover {
+        background-color: #000000;
+        color: #ffffff;
+      }
+
+      .newsletter-btn-text {
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: -0.1px;
+        margin-right: 8px;
+        user-select: none;
+        text-transform: uppercase;
+      }
+
+      .newsletter-btn-circle {
+        width: 28px;
+        height: 28px;
+        background-color: #2e2e2e;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0;
+        position: relative;
+        flex-shrink: 0;
+        transition: background-color 0.25s ease;
+      }
+
+      .newsletter-btn-circle::before,
+      .newsletter-btn-circle::after {
+        content: '';
+        position: absolute;
+        background-color: #ffffff;
+        top: 50%;
+        left: 50%;
+        border-radius: 1px;
+        transition: background-color 0.25s ease;
+      }
+
+      .newsletter-btn-circle::before {
+        width: 10px;
+        height: 1.5px;
+        transform: translate(-50%, -50%);
+      }
+
+      .newsletter-btn-circle::after {
+        width: 1.5px;
+        height: 10px;
+        transform: translate(-50%, -50%);
+      }
+
+      .newsletter-btn-wrapper:hover .newsletter-btn-circle {
+        background-color: #ffffff;
+      }
+
+      .newsletter-btn-wrapper:hover .newsletter-btn-circle::before,
+      .newsletter-btn-wrapper:hover .newsletter-btn-circle::after {
+        background-color: #000000;
+      }
+
+      /* AWARDS SECTION STYLING */
+      .awards-section {
+        width: 100%;
+        height: 100vh;
+        background-color: var(--color-bg);
+        border-top: 1px solid var(--color-divider);
+        border-bottom: 1px solid var(--color-divider);
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+      }
+
+      .awards-grid {
+        display: flex;
+        flex-direction: row;
+        width: max-content;
+        height: 100%;
+        box-sizing: border-box;
+        will-change: transform;
+      }
+
+      .award-card {
+        padding: clamp(40px, 8vh, 80px) 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(24px, 4vh, 48px);
+        height: 100%;
+        width: 33.333vw;
+        box-sizing: border-box;
+        border-right: 1px solid var(--color-divider);
+        background-color: #ffffff;
+        flex-shrink: 0;
+      }
+
+      .award-card:last-child {
+        border-right: none;
+      }
+
+      .award-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 280px;
+        flex: none;
+      }
+
+      .award-img {
+        max-width: 85%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
+      .award-text-container {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .award-title {
+        font-size: 18px;
+        font-weight: 400;
+        color: #000000;
+        letter-spacing: -0.2px;
+        line-height: 1.3;
+        margin: 0;
+      }
+
+      .award-price {
+        font-size: 16px;
+        font-weight: 500;
+        color: #000000;
+        opacity: 0.6;
+        margin: 0;
+      }
+
+      /* OYLA HEADER STYLING */
+      .oyla-header {
+        position: fixed;
+        left: 32px;
+        right: 32px;
+        top: 32px;
+        height: 30px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0;
+        z-index: 100;
+        box-sizing: border-box;
+        background: transparent;
+      }
+
+      /* OYLA Logo */
+      .oyla-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        height: 60px;
+        width: 112px;
+      }
+
+      /* Header Nav */
+      .oyla-header-nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0px;
+        gap: 194px;
+        width: auto;
+        height: 30px;
+      }
+
+      /* About */
+      .oyla-about-link {
+        width: 50px;
+        height: 18px;
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 18px;
+        text-transform: uppercase;
+        color: #A3111E;
+        text-decoration: none;
+        mix-blend-mode: normal;
+        display: inline-block;
+        transition: opacity 0.2s ease;
+      }
+
+      .oyla-about-link:hover {
+        opacity: 0.7;
+      }
+
+      /* Cart + Menu */
+      .oyla-cart-menu {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0px;
+        gap: 50px;
+        width: 126px;
+        height: 30px;
+      }
+
+      /* Burger */
+      .oyla-burger-btn {
+        width: 30px;
+        height: 30px;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        position: relative;
+        transition: opacity 0.2s ease;
+      }
+
+      .oyla-burger-btn:hover {
+        opacity: 0.7;
+      }
+
+      .burger-line {
+        width: 30px;
+        height: 2.2px;
+        background-color: #A3111E;
+        display: block;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      /* [ BAG ] */
+      .oyla-bag-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        width: 46px;
+        height: 18px;
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 18px;
+        color: #A3111E;
+        text-transform: uppercase;
+        transition: opacity 0.2s ease;
+      }
+
+      .oyla-bag-btn:hover {
+        opacity: 0.7;
+      }
+
+      /* ==========================================================================
+         TABLET STYLES (769px – 1199px)
+         ========================================================================== */
+      @media (min-width: 769px) and (max-width: 1199px) {
+        /* Container and spacing overrides (Safe zone min 24px) */
+        .oyla-header {
+          left: 24px;
+          right: 24px;
+          top: 24px;
+        }
+
+        .oyla-header-nav {
+          gap: 100px;
+          width: auto;
+        }
+
+        .oyla-cart-menu {
+          gap: 32px;
+          width: auto;
+        }
+
+        .left-column {
+          padding: 40px 32px;
+        }
+
+        .left-middle {
+          gap: 24px;
+          margin-top: 28px;
+          margin-bottom: 28px;
+        }
+
+        .right-card {
+          padding: 32px;
+          min-height: 40vh;
+        }
+
+        /* Typography scale (preserves strict hierarchy: h1 > h2 > h3 > body-large) */
+        .hero-title {
+          font-size: 48px;
+          line-height: 1.1;
+          margin-bottom: 20px;
+        }
+
+        .heading-style-h1 {
+          font-size: 44px !important;
+          line-height: 1.05;
+          letter-spacing: -1px;
+        }
+
+        .left-heading {
+          font-size: 30px;
+          line-height: 1.2;
+        }
+
+        .left-p,
+        .detail-paragraph {
+          font-size: 18px;
+          line-height: 1.35;
+        }
+
+        .card-subtext {
+          font-size: 12px;
+          margin-top: 10px;
+        }
+
+        /* Awards section */
+        .award-card {
+          width: 50vw;
+          padding: 40px 32px;
+          gap: 24px;
+        }
+
+        .award-image-container {
+          height: 220px !important;
+        }
+
+        .award-title {
+          font-size: 16px;
+          line-height: 1.3;
+        }
+
+        .award-price {
+          font-size: 14px;
+        }
+
+        /* Footer overrides */
+        .replica-footer {
+          grid-template-columns: 1fr 1fr;
+          padding: 60px 32px;
+          gap: 32px;
+        }
+
+        .footer-col:last-child {
+          grid-column: span 2;
+          min-height: auto;
+          margin-top: 24px;
+        }
+
+        .footer-header-item {
+          margin-bottom: 32px;
+        }
+
+        .footer-header-link,
+        .footer-header-text,
+        .footer-link,
+        .footer-credits,
+        .newsletter-desc {
+          font-size: 15px;
+          line-height: 1.35;
+        }
+
+        .newsletter-form {
+          padding: 6px 6px 6px 20px;
+          max-width: 400px;
+        }
+
+        .newsletter-input {
+          font-size: 13px;
+        }
+      }
+
+      /* ==========================================================================
+         MOBILE STYLES (≤ 768px)
+         ========================================================================== */
+      @media (max-width: 768px) {
+        /* Container and safe zone (min 16px safe zone) */
+        .oyla-header {
+          left: 16px;
+          right: 16px;
+          top: 16px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+        }
+
+        .oyla-header-nav {
+          gap: 16px;
+          width: auto;
+          height: 44px;
+        }
+
+        .oyla-cart-menu {
+          gap: 16px;
+          width: auto;
+          height: 44px;
+        }
+
+        /* Expand header targets to minimum touch size (44px) */
+        .oyla-about-link {
+          font-size: 14px;
+          height: 44px;
+          display: inline-flex;
+          align-items: center;
+          padding: 0;
+          min-width: 44px;
+        }
+
+        .oyla-bag-btn {
+          font-size: 14px;
+          height: 44px;
+          display: inline-flex;
+          align-items: center;
+          padding: 0;
+          min-width: 44px;
+        }
+
+        .oyla-burger-btn {
+          width: 44px;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+
+        .burger-line {
+          width: 24px;
+        }
+
+        /* Grid collapse & layout switch */
+        .grid-container {
+          grid-template-columns: 1fr;
+        }
+
+        .left-column {
+          position: relative;
+          height: auto;
+          top: auto;
+          padding: 48px 16px;
+        }
+
+        .right-column {
+          border-left: none;
+        }
+
+        .left-middle {
+          gap: 20px;
+          margin-top: 24px;
+          margin-bottom: 24px;
+        }
+
+        .right-card {
+          padding: 40px 16px;
+          min-height: auto;
+        }
+
+        /* Typography fluid scale & strict hierarchy (h1 > h2 > h3 > body-large) */
+        .hero-title {
+          font-size: 38px;
+          line-height: 1.1;
+          margin-bottom: 16px;
+        }
+
+        .heading-style-h1 {
+          font-size: 34px !important;
+          line-height: 1.1;
+          letter-spacing: -0.5px;
+        }
+
+        .left-heading {
+          font-size: 26px;
+          line-height: 1.2;
+        }
+
+        .left-p,
+        .detail-paragraph {
+          font-size: 15px;
+          line-height: 1.4;
+        }
+
+        .card-subtext {
+          font-size: 11px;
+          margin-top: 8px;
+        }
+
+        /* Video hero padding & layout constraints */
+        .video-hero-sticky {
+          padding: 32px 16px;
+        }
+
+        /* Buttons & interactive elements touch target & alignment */
+        .explore-btn {
+          width: 100%;
+          text-align: center;
+          display: block;
+          padding: 14px 28px;
+          min-height: 44px;
+          font-size: 13px;
+          letter-spacing: 0.1em;
+          box-sizing: border-box;
+        }
+
+        .newsletter-btn-wrapper {
+          min-height: 44px;
+          padding: 6px 6px 6px 18px;
+          box-sizing: border-box;
+        }
+
+        /* Awards section horizontal scrolling card proportions */
+        .award-card {
+          width: 85vw;
+          padding: 32px 16px;
+          gap: 20px;
+        }
+
+        .award-image-container {
+          height: 180px !important;
+        }
+
+        .award-title {
+          font-size: 14px;
+          line-height: 1.3;
+        }
+
+        .award-price {
+          font-size: 13px;
+        }
+
+        /* Footer 1-column collapse and spacing alignment */
+        .replica-footer {
+          grid-template-columns: 1fr;
+          padding: 48px 16px;
+          gap: 32px;
+        }
+
+        .footer-col {
+          min-height: auto;
+        }
+
+        .footer-col:last-child {
+          grid-column: span 1;
+          margin-top: 0;
+        }
+
+        .footer-header-item {
+          margin-bottom: 24px;
+        }
+
+        .footer-header-link,
+        .footer-header-text,
+        .footer-link,
+        .newsletter-desc {
+          font-size: 14px;
+          line-height: 1.4;
+        }
+
+        .footer-credits {
+          margin-top: 24px;
+          font-size: 13px;
+          line-height: 1.4;
+        }
+
+        .footer-links-list {
+          gap: 8px;
+        }
+
+        .newsletter-form {
+          padding: 6px 6px 6px 16px;
+          width: 100%;
+          max-width: 100%;
+        }
+
+        .newsletter-input {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- OYLA HEADER -->
+    <header class="oyla-header">
+      <a href="#" class="oyla-logo" aria-label="OYLA">
+        <svg width="112" height="60" viewBox="0 0 112 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M63.243 44.6164C62.8166 44.6164 62.6034 44.4601 62.6034 44.1475C62.6034 43.8349 62.7882 43.6644 63.1577 43.636L65.0765 43.3376C65.645 43.2524 66.0288 43.1103 66.2278 42.9114C66.4268 42.684 66.5263 42.272 66.5263 41.6752V31.6157C66.5263 30.9905 66.3841 30.3796 66.0999 29.7828L59.8319 16.6543C59.6329 16.1712 59.4055 15.8018 59.1496 15.546C58.8938 15.2903 58.5242 15.1055 58.041 14.9919L57.6572 14.9066C57.2593 14.8214 57.0603 14.6367 57.0603 14.3525C57.0603 14.0683 57.2735 13.9263 57.6999 13.9263H64.9912C65.3892 13.9263 65.5882 14.0825 65.5882 14.3951C65.5882 14.7077 65.3466 14.8782 64.8633 14.9066L64.0532 14.9919C63.5699 15.0203 63.2288 15.1766 63.0298 15.4608C62.8308 15.7449 62.8735 16.1854 63.1577 16.7821L68.4024 27.9499C68.5161 28.1488 68.6582 28.2483 68.8288 28.2483C68.9994 28.2483 69.1415 28.1488 69.2552 27.9499L74.2867 17.6773C74.6562 16.9384 74.7415 16.3417 74.5425 15.887C74.3719 15.4039 73.9598 15.1198 73.306 15.0345L72.3679 14.9066C71.8846 14.8214 71.643 14.6509 71.643 14.3951C71.643 14.0825 71.842 13.9263 72.24 13.9263H78.2948C78.7212 13.9263 78.9344 14.0683 78.9344 14.3525C78.9344 14.6367 78.7354 14.8214 78.3374 14.9066L77.911 14.9919C77.5131 15.0771 77.1577 15.3187 76.845 15.7165C76.5608 16.1143 76.177 16.7821 75.6938 17.7199L70.108 28.9303C69.909 29.3281 69.7669 29.7118 69.6816 30.0812C69.5963 30.4222 69.5537 30.82 69.5537 31.2747V41.6752C69.5537 42.272 69.6532 42.684 69.8521 42.9114C70.0796 43.1103 70.4633 43.2524 71.0034 43.3376L72.9222 43.636C73.2917 43.6644 73.4765 43.8349 73.4765 44.1475C73.4765 44.4601 73.2633 44.6164 72.8369 44.6164H63.243Z" fill="#A3111E"/>
+<path d="M76.8614 44.6164C76.435 44.6164 76.2218 44.4601 76.2218 44.1475C76.2218 43.8917 76.4065 43.7212 76.7761 43.636L77.7568 43.4655C78.3537 43.3518 78.7375 43.1955 78.9081 42.9966C79.107 42.7977 79.2065 42.3999 79.2065 41.8031V16.7395C79.2065 16.1428 79.107 15.7449 78.9081 15.546C78.7375 15.3471 78.3537 15.1908 77.7568 15.0771L76.7761 14.9066C76.4065 14.8214 76.2218 14.6509 76.2218 14.3951C76.2218 14.0825 76.435 13.9263 76.8614 13.9263H84.6644C85.0908 13.9263 85.304 14.0968 85.304 14.4378C85.304 14.6935 85.1476 14.8498 84.8349 14.9066L83.6837 15.0771C83.0867 15.1624 82.6888 15.3187 82.4898 15.546C82.3192 15.7733 82.2339 16.1854 82.2339 16.7821V40.6522C82.2339 41.6752 82.5182 42.4141 83.0867 42.8687C83.6837 43.3234 84.4228 43.5507 85.304 43.5507C85.9578 43.5507 86.6258 43.4229 87.308 43.1671C88.0187 42.8829 88.6583 42.3714 89.2268 41.6326C89.7954 40.8654 90.2217 39.7571 90.506 38.3078L91.0603 35.452C91.1456 35.0825 91.3588 34.8978 91.6999 34.8978C92.0979 34.8978 92.2684 35.1394 92.2116 35.6225L91.6999 43.636C91.6431 44.2896 91.2877 44.6164 90.6339 44.6164H76.8614Z" fill="#A3111E"/>
+<path d="M91.6183 44.6164C91.1919 44.6164 90.9787 44.4743 90.9787 44.1901C90.9787 43.906 91.1777 43.7212 91.5757 43.636L92.2153 43.5081C92.7838 43.3945 93.2102 43.1245 93.4944 42.6982C93.7787 42.2436 94.0203 41.6184 94.2193 40.8227L100.828 14.182C100.885 13.8978 100.971 13.7131 101.084 13.6279C101.226 13.5426 101.354 13.5 101.468 13.5C101.61 13.5 101.738 13.5426 101.852 13.6279C101.994 13.7131 102.093 13.8978 102.15 14.182L108.887 41.2064C109.086 42.002 109.314 42.5562 109.57 42.8687C109.825 43.1813 110.223 43.3945 110.763 43.5081L111.403 43.636C111.801 43.7212 112 43.906 112 44.1901C112 44.4743 111.787 44.6164 111.36 44.6164H104.069C103.671 44.6164 103.472 44.4601 103.472 44.1475C103.472 43.8349 103.714 43.6644 104.197 43.636L105.007 43.5507C105.49 43.4939 105.789 43.3376 105.903 43.0819C106.045 42.8261 106.045 42.3857 105.903 41.7605L104.282 35.1536C104.112 34.4147 103.643 34.0453 102.875 34.0453H98.398C97.6589 34.0453 97.1899 34.4147 96.9909 35.1536L95.5411 40.8654C95.1147 42.4851 95.5411 43.3802 96.8203 43.5507L97.4599 43.636C97.9432 43.7212 98.1848 43.8917 98.1848 44.1475C98.1848 44.4601 97.9858 44.6164 97.5878 44.6164H91.6183ZM98.2701 32.7666H102.96C103.415 32.7666 103.6 32.525 103.515 32.0419L100.786 20.6184H100.573L97.7158 32.0419C97.6305 32.525 97.8152 32.7666 98.2701 32.7666Z" fill="#A3111E"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M29.8667 0C46.3616 0 59.7334 13.4315 59.7334 30C59.7334 46.5685 46.3616 60 29.8667 60C13.3718 60 0 46.5685 0 30C0 13.4315 13.3718 0 29.8667 0ZM29.8653 6.45117C14.2574 6.45146 1.60563 16.9948 1.60563 30C1.60582 43.0051 14.2576 53.5485 29.8653 53.5488C45.4732 53.5488 58.1261 43.0053 58.1263 30C58.1263 16.9946 45.4734 6.45117 29.8653 6.45117Z" fill="#A3111E"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M59.7334 30C59.7334 39.1127 54.0504 46.5 47.0401 46.5C40.0297 46.5 29.8667 39.1939 29.8667 30.0812C29.8667 20.9685 40.0297 13.5 47.0401 13.5C54.0504 13.5 59.7334 20.8873 59.7334 30ZM57.0049 29.9971C57.0049 21.3744 52.5442 14.3835 47.0415 14.3833C41.5388 14.3833 37.0782 21.3743 37.0782 29.9971C37.0784 38.6196 41.5389 45.6094 47.0415 45.6094C52.544 45.6092 57.0047 38.6194 57.0049 29.9971Z" fill="#A3111E"/>
+        </svg>
+      </a>
+      <div class="oyla-header-nav">
+        <a href="#" class="oyla-about-link">ABOUT</a>
+        <div class="oyla-cart-menu">
+          <button class="oyla-burger-btn" aria-label="Menu">
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+          </button>
+          <button class="oyla-bag-btn">
+            [ BAG ]
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- SCROLL-DRIVEN VIDEO HERO -->
+    <div class="scroll-video-container">
+      <div class="video-hero-sticky">
+        <video id="scroll-video" playsinline muted preload="auto" src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260627_212146_743b92b3-40a3-46cb-988d-7bf716564ec3.mp4"></video>
+        <div class="video-overlay"></div>
+        
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <span class="hero-title-line">
+              <span class="hero-title-line-inner">MEASURED</span>
+            </span>
+            <span class="hero-title-line">
+              <span class="hero-title-line-inner">PURITY</span>
+            </span>
+          </h1>
+          <button id="hero-confirm-btn" class="newsletter-btn-wrapper" style="margin-left: 0; margin-top: 10px;" onclick="document.querySelector('.replica-footer').scrollIntoView({ behavior: 'smooth' })">
+            <span class="newsletter-btn-text">DISCOVER</span>
+            <div class="newsletter-btn-circle">+</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AWARDS AND CARDS SECTION -->
+    <section class="awards-section">
+      <div class="awards-grid">
+        <!-- CARD 1 -->
+        <div class="award-card">
+          <div class="award-image-container">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260628_144408_92b74dc4-ca69-412a-acfd-304f9b29eb5e_min.webp" alt="Obsidian Coil" class="award-img" />
+          </div>
+          <div class="award-text-container">
+            <h3 class="award-title">Obsidian Coil</h3>
+            <span class="award-price">$480</span>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="award-card">
+          <div class="award-image-container">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260628_145142_ed02063b-d983-47d2-b60b-4b4a5a3448bd_min.webp" alt="Void Arc" class="award-img" />
+          </div>
+          <div class="award-text-container">
+            <h3 class="award-title">Void Arc</h3>
+            <span class="award-price">$560</span>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="award-card">
+          <div class="award-image-container">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260628_144747_f21bc119-e460-45be-a071-851291bd71c5_min.webp" alt="Onyx Hex" class="award-img" />
+          </div>
+          <div class="award-text-container">
+            <h3 class="award-title">Onyx Hex</h3>
+            <span class="award-price">$620</span>
+          </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="award-card">
+          <div class="award-image-container">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260627_215521_100b78bd-d24a-4225-b2e8-5bb30d44af73_min.webp" alt="Shadow Sigil" class="award-img" />
+          </div>
+          <div class="award-text-container">
+            <h3 class="award-title">Shadow Sigil</h3>
+            <span class="award-price">$740</span>
+          </div>
+        </div>
+
+        <!-- CARD 5 -->
+        <div class="award-card">
+          <div class="award-image-container">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260628_144408_92b74dc4-ca69-412a-acfd-304f9b29eb5e_min.webp" alt="Eclipse Band" class="award-img" />
+          </div>
+          <div class="award-text-container">
+            <h3 class="award-title">Eclipse Band</h3>
+            <span class="award-price">$820</span>
+          </div>
+        </div>
+
+        <!-- CARD 6 -->
+        <div class="award-card">
+          <div class="award-image-container">
+            <img src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260628_145142_ed02063b-d983-47d2-b60b-4b4a5a3448bd_min.webp" alt="Matte Skull" class="award-img" />
+          </div>
+          <div class="award-text-container">
+            <h3 class="award-title">Matte Skull</h3>
+            <span class="award-price">$950</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEO CLIP REVEAL CONTAINER (Clipping Frame inside Pinned Section) -->
+      <div class="video-scaling-wrapper">
+        <video id="scroll-video-second" playsinline muted preload="auto" src="https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260628_122130_8b16d300-75cb-49f5-82ce-afd6b79c2d79.mp4"></video>
+      </div>
+
+    </section>
+
+    <!-- MAIN OPPORTUNITY SECTION -->
+    <section class="outer-section">
+      <div class="grid-container">
+        
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+          <!-- Top -->
+          <h2 class="left-heading" data-fade-slide-in>Made Without Compromise</h2>
+          
+          <!-- Middle -->
+          <div class="left-middle">
+            <p class="left-p" data-fade-slide-in>Each ring is forged by a single pair of hands — no factory floor, no assembly line. The material is chosen first; the form follows its nature.</p>
+            <p class="left-p" data-fade-slide-in>We work in oxidized silver, blackened bronze, and raw brass. Weights are deliberate. Edges are left where they fall. Nothing is smoothed for comfort.</p>
+            <p class="left-p" data-fade-slide-in>OYLA exists for those who wear jewelry that means something. Not decoration — declaration. One piece at a time, made to last a lifetime.</p>
+          </div>
+          
+          <!-- Bottom -->
+          <div class="left-bottom" data-fade-slide-in>
+            <button class="newsletter-btn-wrapper" style="margin-left: 0;">
+              <span class="newsletter-btn-text">VIEW COLLECTION</span>
+              <div class="newsletter-btn-circle">+</div>
+            </button>
+          </div>
+        </div>
+        
+        <!-- RIGHT COLUMN -->
+        <div class="right-column">
+          
+          <!-- CARD 1 -->
+          <div class="right-card">
+            <div class="stomp-wrapper">
+              <div class="stomp-stack stack-a">
+                <h1 class="heading-style-h1">100%</h1>
+                <h1 class="heading-style-h1">100%</h1>
+              </div>
+              <div class="stomp-stack stack-b">
+                <h1 class="heading-style-h1">Handmade</h1>
+                <h1 class="heading-style-h1">Handmade</h1>
+              </div>
+            </div>
+            <p class="detail-paragraph">Every ring crafted by a single artisan, start to finish</p>
+          </div>
+
+          <!-- CARD 2 -->
+          <div class="right-card">
+            <div class="stomp-wrapper">
+              <div class="stomp-stack stack-a">
+                <h1 class="heading-style-h1">14–92g</h1>
+                <h1 class="heading-style-h1">14–92g</h1>
+              </div>
+              <div class="stomp-stack stack-b">
+                <h1 class="heading-style-h1">Per piece</h1>
+                <h1 class="heading-style-h1">Per piece</h1>
+              </div>
+            </div>
+            <p class="detail-paragraph">Deliberate weight — each ring is a physical presence you feel</p>
+          </div>
+
+          <!-- CARD 3 -->
+          <div class="right-card">
+            <div class="stomp-wrapper">
+              <div class="stomp-stack stack-a">
+                <h1 class="heading-style-h1">Sterling</h1>
+                <h1 class="heading-style-h1">Sterling</h1>
+              </div>
+              <div class="stomp-stack stack-b">
+                <h1 class="heading-style-h1">& Silver</h1>
+                <h1 class="heading-style-h1">& Silver</h1>
+              </div>
+            </div>
+            <p class="detail-paragraph">Oxidized metals only — no plating, no compromise</p>
+          </div>
+
+          <!-- CARD 4 -->
+          <div class="right-card">
+            <div class="stomp-wrapper">
+              <div class="stomp-stack stack-a">
+                <h1 class="heading-style-h1">Lifetime</h1>
+                <h1 class="heading-style-h1">Lifetime</h1>
+              </div>
+              <div class="stomp-stack stack-b">
+                <h1 class="heading-style-h1">Guarantee</h1>
+                <h1 class="heading-style-h1">Guarantee</h1>
+              </div>
+            </div>
+            <p class="detail-paragraph">We stand behind every piece we make, forever</p>
+            <p class="card-subtext">Est. OYLA Studio, 2019.</p>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- Spacer for the fixed/revealed footer -->
+    <div class="footer-spacer" style="pointer-events: none; background: transparent; width: 100%;"></div>
+
+    <!-- REPLICA FOOTER SECTION -->
+    <footer class="replica-footer">
+      <!-- COLUMN 1: Sign in & Credits -->
+      <div class="footer-col">
+        <div class="footer-header-item">
+          <a href="#" class="footer-header-link">Sign in</a>
+        </div>
+
+        <div class="footer-content-item">
+          <div class="footer-credits">
+            <p>Handcrafted in small batches</p>
+            <p>OYLA Studio</p>
+            <br>
+            <p>Based in Berlin</p>
+            <p>© OYLA 2025</p>
+            <p>All pieces are original designs.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUMN 2: Links -->
+      <div class="footer-col">
+        <div class="footer-header-item">
+          <a href="#" class="footer-header-link">Instagram</a>
+        </div>
+
+        <div class="footer-content-item">
+          <div class="footer-links-list">
+            <a href="#" class="footer-link">Refund Policy</a>
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUMN 3: Newsletter -->
+      <div class="footer-col">
+        <div class="footer-header-item">
+          <h3 class="footer-header-text">Newsletter</h3>
+        </div>
+
+        <div class="footer-content-item">
+          <p class="newsletter-desc">Join our list. Be first to know new drops. 10% off your first order.</p>
+
+          <form class="newsletter-form" onsubmit="event.preventDefault(); alert('You\'re on the list. Welcome.');">
+            <input type="email" class="newsletter-input" placeholder="Email" required />
+            <button type="submit" class="newsletter-btn-wrapper">
+              <span class="newsletter-btn-text">SUBSCRIBE</span>
+              <div class="newsletter-btn-circle">+</div>
+            </button>
+          </form>
+        </div>
+      </div>
+    </footer>
+
+    <!-- GSAP + ScrollTrigger Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+    <!-- Dynamic Layout & Animation Script -->
+    <script>
+      // Register ScrollTrigger with GSAP
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Smooth Video Scroll Scrubbing Logic
+      const videoContainer = document.querySelector('.scroll-video-container');
+      const video = document.getElementById('scroll-video');
+      const videoIndicator = document.getElementById('video-scroll-indicator');
+
+      if (video && videoContainer) {
+        // Keep video paused
+        video.pause();
+
+        // Dynamically fetch the freshest direct video URL from server
+        fetch("/api/higgsfield-video")
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success && data.url) {
+              console.log("Dynamically loaded video URL from Higgsfield:", data.url);
+              // Resolve relative/absolute differences to prevent redundant reloads
+              const absoluteTarget = new URL(data.url, window.location.href).href;
+              const absoluteCurrent = video.src ? new URL(video.src, window.location.href).href : "";
+              
+              if (absoluteTarget !== absoluteCurrent) {
+                const wasCurrentTime = video.currentTime;
+                video.src = data.url;
+                video.load();
+                video.currentTime = wasCurrentTime;
+              }
+            }
+          })
+          .catch(err => {
+            console.warn("Failed to dynamically fetch video URL, using robust fallback CDN source.", err);
+          });
+
+        let targetTime = 0;
+        let currentTime = 0;
+
+        function scrubVideo() {
+          const rect = videoContainer.getBoundingClientRect();
+          const totalHeight = videoContainer.offsetHeight - window.innerHeight;
+          const scrolled = -rect.top;
+
+          let progress = scrolled / totalHeight;
+          progress = Math.max(0, Math.min(1, progress));
+
+          // Only calculate if metadata is loaded (readyState >= 1)
+          if (video.readyState >= 1 && video.duration) {
+            // Keep a tiny margin at the end of the video to avoid looping/stalling issues
+            const safeDuration = video.duration - 0.05;
+            targetTime = progress * safeDuration;
+            targetTime = Math.max(0, Math.min(safeDuration, targetTime));
+
+            // Smoothly interpolate video.currentTime for a luxury cinematic experience
+            currentTime += (targetTime - currentTime) * 0.08;
+            
+            if (Math.abs(currentTime - targetTime) < 0.01) {
+              currentTime = targetTime;
+            }
+            
+            // CRITICAL PERFORMANCE GUARD: 
+            // Avoid setting currentTime if the video is already busy seeking or the change is negligible.
+            // This prevents the browser decoder from being flooded with requests, which causes freezing and black screens.
+            if (!video.seeking && Math.abs(video.currentTime - currentTime) > 0.01) {
+              video.currentTime = currentTime;
+            }
+          }
+
+          // Fade out scroll indicator after 10% progress
+          if (videoIndicator) {
+            if (progress > 0.1) {
+              videoIndicator.style.opacity = '0';
+              videoIndicator.style.pointerEvents = 'none';
+            } else {
+              videoIndicator.style.opacity = (1 - (progress / 0.1)).toString();
+              videoIndicator.style.pointerEvents = 'auto';
+            }
+          }
+
+          // Smooth scroll-synchronized transition for Hero Title lines and Button once video progress is >= 80% (progress >= 0.8)
+          const titleInners = document.querySelectorAll('.hero-title-line-inner');
+          const confirmBtn = document.getElementById('hero-confirm-btn');
+          
+          let animProgress = 0;
+          if (progress >= 0.8) {
+            animProgress = (progress - 0.8) / 0.2; // Map 0.8 -> 1.0 range to 0.0 -> 1.0 range
+          }
+          
+          const heroChars = document.querySelectorAll('.hero-char');
+          const totalChars = heroChars.length;
+          heroChars.forEach((char, i) => {
+            const charStart = (i / Math.max(totalChars - 1, 1)) * 0.6;
+            let p = (animProgress - charStart) / 0.4;
+            p = Math.max(0, Math.min(1, p));
+            const eased = p * p * p;
+            char.style.opacity = (1 - eased).toString();
+            char.style.transform = `translate3d(0, ${-28 * eased}px, 0)`;
+            char.style.filter = `blur(${9 * eased}px)`;
+          });
+          
+          if (confirmBtn) {
+            // Button fades out and shifts up
+            const btnEased = Math.pow(animProgress, 4);
+            confirmBtn.style.transform = `translate3d(0, ${-25 * btnEased}px, 0)`;
+            confirmBtn.style.opacity = (1 - animProgress).toString();
+            if (animProgress >= 0.95) {
+              confirmBtn.style.pointerEvents = 'none';
+            } else {
+              confirmBtn.style.pointerEvents = 'auto';
+            }
+          }
+
+          requestAnimationFrame(scrubVideo);
+        }
+
+        // Start scrubbing loop
+        requestAnimationFrame(scrubVideo);
+
+        // Scroll event for instant indicator fade response
+        window.addEventListener('scroll', () => {
+          const rect = videoContainer.getBoundingClientRect();
+          const totalHeight = videoContainer.offsetHeight - window.innerHeight;
+          const scrolled = -rect.top;
+          let progress = scrolled / totalHeight;
+          progress = Math.max(0, Math.min(1, progress));
+          
+          if (videoIndicator) {
+            if (progress > 0.1) {
+              videoIndicator.style.opacity = '0';
+            } else {
+              videoIndicator.style.opacity = (1 - (progress / 0.1)).toString();
+            }
+          }
+        }, { passive: true });
+      }
+
+      // Smooth Video Scroll Scrubbing Logic for Second Video
+      const secondVideo = document.getElementById('scroll-video-second');
+
+      if (secondVideo) {
+        // Keep video paused
+        secondVideo.pause();
+
+        // Dynamically fetch the freshest direct video URL from server
+        fetch("/api/higgsfield-video?url=https://higgsfield.ai/s/iK6bYyCxd0I")
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success && data.url) {
+              console.log("Dynamically loaded second video URL from Higgsfield:", data.url);
+              const absoluteTarget = new URL(data.url, window.location.href).href;
+              const absoluteCurrent = secondVideo.src ? new URL(secondVideo.src, window.location.href).href : "";
+              
+              if (absoluteTarget !== absoluteCurrent) {
+                const wasCurrentTime = secondVideo.currentTime;
+                secondVideo.src = data.url;
+                secondVideo.load();
+                secondVideo.currentTime = wasCurrentTime;
+              }
+            }
+          })
+          .catch(err => {
+            console.warn("Failed to dynamically fetch second video URL, using robust fallback.", err);
+          });
+      }
+
+      // Shared variables for smooth second video scrubbing driven by GSAP timeline
+      let targetTimeSecond = 0;
+      let currentTimeSecond = 0;
+
+      function smoothScrubSecond() {
+        const secondVideo = document.getElementById('scroll-video-second');
+        if (secondVideo && secondVideo.readyState >= 1 && secondVideo.duration) {
+          // Smoothly interpolate secondVideo.currentTime
+          currentTimeSecond += (targetTimeSecond - currentTimeSecond) * 0.08;
+          
+          if (Math.abs(currentTimeSecond - targetTimeSecond) < 0.01) {
+            currentTimeSecond = targetTimeSecond;
+          }
+          
+          if (!secondVideo.seeking && Math.abs(secondVideo.currentTime - currentTimeSecond) > 0.01) {
+            secondVideo.currentTime = currentTimeSecond;
+          }
+        }
+        requestAnimationFrame(smoothScrubSecond);
+      }
+      requestAnimationFrame(smoothScrubSecond);
+
+      // Track ScrollTriggers to easily clear/rebuild on resize
+      let activeTriggers = [];
+
+      function initStompAnimations() {
+        // Ensure char/word splits exist before any animation setup
+        initTextSplits();
+
+        // Natively kill ALL existing ScrollTrigger instances on the page.
+        // This is 100% robust and automatically cleans up all pinning spacers, resets layout,
+        // and restores elements to their original state before we rebuild.
+        ScrollTrigger.getAll().forEach(t => {
+          if (t && typeof t.kill === 'function') {
+            t.kill(true);
+          }
+        });
+        activeTriggers = [];
+
+        // Kill active GSAP animations on target elements to prevent conflicts
+        gsap.killTweensOf(".heading-style-h1, .stomp-stack, .detail-paragraph, .card-subtext, [data-fade-slide-in], .awards-grid, .video-scaling-wrapper, #scroll-video-second, .hero-char, .stat-char, .detail-word");
+
+        // Reset all animated elements to a clean state
+        document.querySelectorAll('.heading-style-h1, .detail-paragraph, .card-subtext, [data-fade-slide-in], .awards-grid, .video-scaling-wrapper, #scroll-video-second').forEach(el => {
+          gsap.set(el, { clearProps: "all" });
+        });
+        document.querySelectorAll('.hero-char, .stat-char, .detail-word').forEach(el => {
+          el.style.opacity = '';
+          el.style.transform = '';
+          el.style.filter = '';
+        });
+        document.querySelectorAll('.stomp-stack').forEach(s => {
+          s.style.overflow = '';
+          s.style.height = '';
+        });
+
+        // 4. LEFT PANEL FADE & SLIDE-IN ANIMATIONS
+        // Only run on desktop screens >= 768px
+        if (window.innerWidth >= 768) {
+          const fadeAnim = gsap.fromTo("[data-fade-slide-in]", 
+            { autoAlpha: 0, y: 20 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              stagger: 0.15,
+              duration: 0.8,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: ".outer-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+              }
+            }
+          );
+          if (fadeAnim.scrollTrigger) {
+            activeTriggers.push(fadeAnim.scrollTrigger);
+          }
+        } else {
+          // Clean up fade-slide-in properties for smaller screens so elements are fully visible
+          gsap.set("[data-fade-slide-in]", { clearProps: "all" });
+        }
+
+        // 5. HORIZONTAL AWARDS SCROLL ON VERTICAL SCROLL & VIDEO REVEAL
+        const section = document.querySelector('.awards-section');
+        const grid = document.querySelector('.awards-grid');
+        const videoScalingWrapper = document.querySelector('.video-scaling-wrapper');
+        const secondVideo = document.getElementById('scroll-video-second');
+
+        if (section && grid) {
+          gsap.set(grid, { clearProps: "transform" }); // Reset inline transform
+          if (videoScalingWrapper) {
+            gsap.set(videoScalingWrapper, { clearProps: "all" });
+          }
+          if (secondVideo) {
+            gsap.set(secondVideo, { clearProps: "all" });
+          }
+          
+          const scrollDistance = () => Math.max(0, grid.scrollWidth - window.innerWidth);
+          const totalDuration = () => scrollDistance() + window.innerHeight * 1.5;
+          
+          const carouselTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              pin: true,
+              start: "top top",
+              end: () => `+=${totalDuration()}`,
+              scrub: true,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => {
+                // Symmetrical smooth second video scrubbing driven by GSAP timeline progress
+                if (secondVideo && secondVideo.duration) {
+                  const d1 = scrollDistance();
+                  const dTot = totalDuration();
+                  let progressSecond = 0;
+                  if (dTot > 0) {
+                    const startProgress = d1 / dTot;
+                    if (self.progress >= startProgress) {
+                      progressSecond = (self.progress - startProgress) / (1 - startProgress);
+                    }
+                  }
+                  progressSecond = Math.max(0, Math.min(1, progressSecond));
+                  
+                  const safeDuration = secondVideo.duration - 0.05;
+                  targetTimeSecond = progressSecond * safeDuration;
+                  targetTimeSecond = Math.max(0, Math.min(safeDuration, targetTimeSecond));
+                }
+              }
+            }
+          });
+          
+          // Phase 1: Horizontal scroll of the awards grid
+          carouselTl.to(grid, {
+            x: () => -scrollDistance(),
+            ease: "none",
+            duration: () => scrollDistance()
+          });
+          
+          // Phase 2: Symmetrically expand the video container from the center (0% to 100%)
+          if (videoScalingWrapper) {
+            carouselTl.fromTo(videoScalingWrapper, {
+              width: "0%"
+            }, {
+              width: "100%",
+              ease: "none",
+              duration: () => window.innerHeight * 1.5
+            });
+          }
+          
+          if (carouselTl.scrollTrigger) {
+            activeTriggers.push(carouselTl.scrollTrigger);
+          }
+        }
+
+        // 6. DYNAMIC FOOTER REVEAL SPACING
+        const footer = document.querySelector('.replica-footer');
+        const spacer = document.querySelector('.footer-spacer');
+        if (footer && spacer) {
+          // Set spacer height to match footer height
+          spacer.style.height = `${footer.offsetHeight}px`;
+        }
+      }
+
+      // Use fonts.ready (not window.load) — fires before user can scroll to the stats section.
+      // window.load waits for Higgsfield CDN videos which load slowly; by then the user
+      // may already be past the section and the exit scrub would snap mid-progress, hiding text.
+      document.fonts.ready.then(() => {
+        initStompAnimations();
+      });
+
+      // Handle viewport resizing with a debounced wrapper to prevent thrashing
+      let lastWidth = window.innerWidth;
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          // Always keep the spacer height in sync on resize
+          const footer = document.querySelector('.replica-footer');
+          const spacer = document.querySelector('.footer-spacer');
+          if (footer && spacer) {
+            spacer.style.height = `${footer.offsetHeight}px`;
+          }
+
+          const currentWidth = window.innerWidth;
+          if (currentWidth !== lastWidth) {
+            lastWidth = currentWidth;
+            initStompAnimations();
+          } else {
+            // Only update positions/calculations if width didn't change (prevents breaking on mobile address bar scroll toggle)
+            ScrollTrigger.refresh();
+          }
+        }, 200);
+      });
+
+      function initTextSplits() {
+        document.querySelectorAll('.hero-title-line-inner').forEach(el => {
+          if (el.dataset.split) return;
+          el.dataset.split = 'true';
+          el.innerHTML = el.textContent.split('').map(c =>
+            c === ' '
+              ? '<span class="hero-char" style="display:inline-block;white-space:pre"> </span>'
+              : `<span class="hero-char" style="display:inline-block">${c}</span>`
+          ).join('');
+        });
+
+        document.querySelectorAll('.right-card .heading-style-h1:last-child').forEach(el => {
+          if (el.dataset.split) return;
+          el.dataset.split = 'true';
+          el.innerHTML = el.textContent.split('').map(c =>
+            c === ' '
+              ? '<span class="stat-char" style="display:inline-block;white-space:pre"> </span>'
+              : `<span class="stat-char" style="display:inline-block">${c}</span>`
+          ).join('');
+        });
+
+        document.querySelectorAll('.right-card .detail-paragraph').forEach(el => {
+          if (el.dataset.split) return;
+          el.dataset.split = 'true';
+          el.innerHTML = el.textContent.trim().split(/(\s+)/).map(w =>
+            w.trim() === '' ? w
+              : `<span class="detail-word" style="display:inline-block">${w}</span>`
+          ).join('');
+        });
+      }
+      document.addEventListener('DOMContentLoaded', initTextSplits);
+    </script>
+  </body>
+</html>
